@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 import java.util.*;
+import java.util.Comparator;
+import java.util.Map.Entry;
 
 @RestController
 @RequestMapping("/api/tree")
@@ -35,7 +37,25 @@ public class TreeController {
     private Map<String, Long> getListGenre(){
         List<String > listGenre= treeRepository.getGenre();
         List<Long> listNbtreebyGenre = treeRepository.countTreebyGenre();
-        return getStringLongMap(listGenre, listNbtreebyGenre);
+        Map<String, Long> listgenreAndArbre = new HashMap<>();
+        LinkedHashMap<String, Long> sortedMap = new LinkedHashMap<>();
+        ArrayList<Long> list = new ArrayList<>();
+        for(int i =0 ; i< listGenre.size(); i++){
+            listgenreAndArbre.put(listGenre.get(i), listNbtreebyGenre.get(i));
+        }
+        for (Map.Entry<String, Long> entry : listgenreAndArbre.entrySet()) {
+            list.add(entry.getValue());
+        }
+        Collections.sort(list, Comparator.reverseOrder());
+        for (Long str : list) {
+            for (Entry<String, Long> entry : listgenreAndArbre.entrySet()) {
+                if (entry.getValue().equals(str)) {
+                    sortedMap.put(entry.getKey(), str);
+                }
+            }
+        }
+        System.out.println(sortedMap);
+        return sortedMap;
     }
 
     //function that Sort a map Values by keys
